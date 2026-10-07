@@ -92,7 +92,7 @@ form{background:var(--g);border:1px solid var(--l);border-radius:28px;padding:30
 </main>
 <footer id="ft"></footer>
 <div id="dash"><div class="dw" id="dw"></div></div><a class="btn fab" href="#zapis">Записаться</a><div id="ins"><div class="sh"><h3 style="margin:0 0 10px">Добавить на главный экран</h3><div id="insb"></div><button type="button" data-x="1" style="width:100%;margin-top:16px">Понятно</button></div></div><div id="toast"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="three.min.js" onerror="this.onerror=null;var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';document.head.appendChild(s)"></script>
 <script>
 const HASH='f54e60a0f760fba86a2823fcd0059096fc4c4342bd1d497b9cf6c03fe268f877';
 const $=s=>document.querySelector(s),E=s=>String(s??'').replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
@@ -112,7 +112,7 @@ const v=$('#ss').value;$('#ss').innerHTML=C.services.map(s=>`<option>${E(s.n)}</
 $('#ft').innerHTML=`${E(C.name)} · ${E(C.phone)} · ${E(C.addr)}`}
 paint();
 let SV=false,TK=lg('tk',null);
-const API_BASE='https://autoservice12.danilcursinov129.workers.dev';
+const API_BASE='';
 const NOTE=()=>SV||db?'':'<div class="card" style="margin-bottom:12px;border-color:#ff8a7a">⚠ Демо-режим: данные хранятся только в этом браузере, заявки клиентов сюда не приходят. Подключите сервер (см. README).</div>';
 const api0=async(p,o)=>{o=o||{};let tm;const r=await Promise.race([fetch(API_BASE+'/api/'+p,Object.assign({},o,{headers:Object.assign({'Content-Type':'application/json'},TK&&TK.t?{Authorization:'Bearer '+TK.t}:{})})),new Promise((_,j)=>{tm=setTimeout(()=>j(new Error('timeout')),10000)})]);clearTimeout(tm);if(!r.ok)throw new Error(r.status);return r.json()};
 const api=async(p,o,n)=>{let e;for(let i=0;i<(n||3);i++){try{return await api0(p,o)}catch(er){e=er;const m=String(er).match(/Error: (\d+)/);if(m&&+m[1]<500)throw er;await new Promise(r=>setTimeout(r,700*(i+1)))}}throw e};
@@ -165,7 +165,8 @@ const wh=G();wh.add(tube([[-2,3.05,-.4],[-1,3.15,.3],[0,3.1,-.3],[1,3.2,.35],[2,
 const pa=new Float32Array(900);for(let i=0;i<900;i++)pa[i]=(Math.random()-.5)*(i%3==1?8:16);const pg2=new THREE.BufferGeometry();pg2.setAttribute('position',new THREE.BufferAttribute(pa,3));const pts=new THREE.Points(pg2,new THREE.PointsMaterial({color:0xd4b06a,size:.045,transparent:true,opacity:.55,depthWrite:false}));S.add(pts);
 const grid=new THREE.GridHelper(16,32,0xd4b06a,0x4a4231);grid.position.y=-1.9;grid.material.transparent=true;grid.material.opacity=.22;S.add(grid);S.fog=new THREE.Fog(0x070707,10,24);
 return{R,S,cam,P,PI,crank,rim,pts,N:P.length,resize(){R.setSize(innerWidth,innerHeight,false);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}}}
-try{GL=build();GL.resize()}catch(err){GL=null;$('#gl').style.display='none'}
+function initGL(){try{GL=build();GL.resize();dirty=3;$('#gl').style.display=''}catch(err){GL=null;$('#gl').style.display='none'}}
+if(window.THREE)initGL();else addEventListener('load',()=>{window.THREE&&initGL()});
 addEventListener('resize',()=>{GL&&GL.resize();dirty=3});
 function gfx(p,t,h){const q=GL;if(!q)return;const al=sm(cl((p-.86)/.1));
 q.P.forEach((o,i)=>{const s=i/q.N*.72,k=ez(cl((p-s)/.2));o.g.visible=k>.002;o.g.position.copy(o.g.userData.b).addScaledVector(o.f,1-k);o.g.rotation.x=o.sp*(1-k);o.g.scale.setScalar(k>=1?1+.035*Math.sin(Math.PI*cl((p-s-.2)/.05)):1)});
